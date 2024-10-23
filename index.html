@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="vue.js"></script>
+    <title>Вопросы</title>
+</head>
+<body>
+<template>
+    <div class="question-form">
+        <h2>Добавить вопрос в тест</h2>
+    
+        <!-- Поле для ввода текста вопроса -->
+        <div class="form-group">
+          <label for="question">Вопрос:</label>
+          <input type="text" v-model="questionText" placeholder="Введите текст вопроса" class="form-control" required/>
+        </div>
+    
+        <!-- Выбор типа вопроса -->
+        <div class="form-group">
+          <label for="question-type">Тип вопроса:</label>
+          <select v-model="questionType" class="form-control">
+            <option value="text">Текстовый ответ</option>
+            <option value="multiple-choice">Несколько вариантов ответа</option>
+            <option value="single-choice">Один вариант ответа</option>
+          </select>
+        </div>
+    
+        <!-- Ввод вариантов ответов, если выбран multiple-choice или single-choice -->
+        <div v-if="questionType !== 'text'">
+          <div class="form-group">
+            <label for="answer">Варианты ответа:</label>
+            <div v-for="(answer, index) in answers" :key="index">
+              <input type="text" v-model="answer.text" placeholder="Введите вариант ответа" class="form-control"/>
+              <button @click="removeAnswer(index)" class="btn btn-danger">Удалить</button>
+            </div>
+            <button @click="addAnswer" class="btn btn-primary">Добавить вариант</button>
+          </div>
+    
+          <!-- Для single-choice - выбор правильного варианта -->
+          <div v-if="questionType === 'single-choice'">
+            <label for="correct-answer">Выберите правильный ответ:</label>
+            <div v-for="(answer, index) in answers" :key="index">
+              <input type="radio" :value="index" v-model="correctAnswer" />
+              {{ answer.text }}
+            </div>
+          </div>
+    
+          <!-- Для multiple-choice - выбор правильных вариантов -->
+          <div v-if="questionType === 'multiple-choice'">
+            <label for="correct-answer">Выберите правильные ответы:</label>
+            <div v-for="(answer, index) in answers" :key="index">
+              <input type="checkbox" :value="index" v-model="correctAnswers" />
+              {{ answer.text }}
+            </div>
+          </div>
+        </div>
+    
+        <!-- Кнопка для добавления вопроса -->
+        <button @click="addQuestion" class="btn btn-success">Добавить вопрос</button>
+    
+        <!-- Список добавленных вопросов -->
+        <div class="questions-list">
+          <h3>Список вопросов:</h3>
+          <ul>
+            <li v-for="(question, index) in questions" :key="index">
+              {{ question.text }}
+              <button @click="removeQuestion(index)" class="btn btn-danger">Удалить</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+</template>
+</body>
+</html>
